@@ -1,17 +1,17 @@
 # Gemini JavaScript Web Demo
 
-<a href="https://idx.google.com/new?template=https%3A%2F%2Fgithub.com%2Fproject-idx%2Ftemplates%2Ftree%2Fmain%2Fgemini%2Fjs-web">
+<a href="https://studio.firebase.google.com/new?template=https://github.com/firebase-studio/templates/tree/main/gemini">
   <picture>
     <source
       media="(prefers-color-scheme: dark)"
-      srcset="https://cdn.idx.dev/btn/open_dark_32.svg">
+      srcset="https://cdn.firebasestudio.dev/btn/open_dark_32.svg">
     <source
       media="(prefers-color-scheme: light)"
-      srcset="https://cdn.idx.dev/btn/open_light_32.svg">
+      srcset="https://cdn.firebasestudio.dev/btn/open_light_32.svg">
     <img
       height="32"
-      alt="Open in IDX"
-      src="https://cdn.idx.dev/btn/open_purple_32.svg">
+      alt="Open in Firebase Studio"
+      src="https://cdn.firebasestudio.dev/btn/open_blue_32.svg">
   </picture>
 </a>
 
