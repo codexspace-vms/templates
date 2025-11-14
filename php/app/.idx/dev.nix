@@ -19,9 +19,19 @@
         # Open editors for the following files by default, if they exist:
         default.openFiles = ["index.php"];
       };
-      # Runs when a workspace is (re)started
-      onStart= {
-        run-server = "php -S localhost:3000 index.php";
+    };
+    previews = {
+      enable = true;
+      previews = {
+        web = {
+          command = [
+            "php"
+            "-S"
+            "localhost:$PORT"
+            "index.php"
+          ];
+          manager = "web";
+        };
       };
     };
   };
