@@ -17,8 +17,8 @@
     },
 }[packageManager]%}
 { pkgs, ... }: {
-  # Use a stable channel with necessary Android tools
-  channel = "stable-24.05";
+  # Using unstable channel often provides better/newer Android tools support
+  channel = "unstable";
   
   packages = [
     {{perPackageManager.packages}}
@@ -27,46 +27,62 @@
     pkgs.android-tools
   ];
 
-  # Environment variables
+  # Sets environment variables in the workspace
   env = {
-    # Cordova needs to know where JAVA_HOME is
     JAVA_HOME = "${pkgs.jdk17}";
-    ANDROID_HOME = "/home/user/android-sdk"; # Standard path in IDX
   };
 
   idx = {
-    # Extensions for Cordova and Web Development
     extensions = [
       "vsmobile.cordova-tools"
     ];
 
     workspace = {
-      # Setup commands - run only once when the workspace is created
       onCreate = {
         install = "{{perPackageManager.install}}";
-        # CRITICAL: This runs inside the environment, so it has access to Android SDK
-        setup-android = "npx cordova platform add android"; 
+        # We skip 'prepare' here to avoid failures during creation if SDK isn't ready
       };
       
-      # Commands to run when the workspace starts/restarts
       onStart = {
-        # 1. Wait for the emulator to be ready
+        # 1. Connect to the emulator
         connect-device = ''
           adb -s localhost:5554 wait-for-device
         '';
         
-        # 2. Deploy the app to the emulator
-        run-android = ''
-          npx cordova run android --emulator --noprepare
+        # 2. Build and run the app
+        # We wrap this in a block to handle errors gracefully and prevent restart loops
+        android = ''
+          # Attempt to find the Android SDK root in the Nix store
+          # This looks for the directory containing 'cmdline-tools'
+          export ANDROID_HOME=$(find /nix/store -maxdepth 4 -type d -name "android-sdk" 2>/dev/null | head -n 1)
+          
+          if [ -z "$ANDROID_HOME" ]; then
+            echo "ANDROID_HOME could not be found automatically."
+            echo "Native builds might fail."
+          else
+            export ANDROID_SDK_ROOT=$ANDROID_HOME
+            echo "Found Android SDK at: $ANDROID_HOME"
+          fi
+
+          # Run Cordova
+          # We use '|| sleep infinity' to ensure that if Cordova crashes or fails,
+          # the process doesn't exit, which prevents the "glitching" restart loop.
+          npx cordova run android --emulator --noprepare || {
+            echo "Cordova run failed. You may need to debug the native build."
+            echo "You can still use the Web Preview."
+            sleep infinity
+          }
         '';
       };
     };
-
-    # Preview configuration
+    
     previews = {
       enable = true;
       previews = {
-        # Android preview (Viewed via the Android Emulator)
+        web = {
+          command = ["npx" "cordova" "run" "browser" "--port" "$PORT"];
+          manager = "web";
+        };
         android = {
           command = ["tail" "-f" "/dev/null"];
           manager = "web";
