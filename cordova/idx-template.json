@@ -4,24 +4,21 @@
   "categories": [
     "Mobile"
   ],
-  "icon":  "https://cordova.apache.org/static/img/cordova_256. png",
-  "publisher": "Shiman",
+  "icon": "https://cordova.apache.org/static/img/cordova_256. png",
+  "publisher": "Favourite",
   "host": {
     "virtualization": true
   },
   "params": [
     {
-      "id":  "appName",
-      "name": "What is your app name?",
-      "type": "text",
-      "default": "MyApp",
-      "required": true
-    },
-    {
-      "id": "appId",
-      "name": "What is your app ID (reverse domain)?",
-      "type": "text",
-      "default":  "com.example.myapp",
+      "id": "packageManager",
+      "name": "What package manager do you want to use?",
+      "type": "enum",
+      "default": "npm",
+      "options": {
+        "npm": "npm",
+        "yarn": "yarn"
+      },
       "required": true
     }
   ]

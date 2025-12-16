@@ -1,18 +1,21 @@
-{ pkgs, appName, appId, ... }: {
+{ pkgs, packageManager ? "npm", ... }: {
   packages = [
     pkgs.nodejs_20
+    pkgs.yarn
+    pkgs. j2cli
+    pkgs.nixfmt
   ];
   bootstrap = ''
-    mkdir -p "$WS_NAME/. idx"
-    
-    # Copy the dev.nix configuration
-    cp ${./devNix.j2} "$WS_NAME/.idx/dev.nix"
-    sed -i "s/{{appName}}/${appName}/g" "$WS_NAME/.idx/dev.nix"
-    sed -i "s/{{appId}}/${appId}/g" "$WS_NAME/.idx/dev.nix"
-    
-    # Copy README
-    cp ${./README.j2} "$WS_NAME/README.md"
-    
+    mkdir -p "$WS_NAME"
+    npm install -g cordova
+    cordova create "$WS_NAME" com.example.app MyApp
+    cd "$WS_NAME"
+    cordova platform add android
+    cordova platform add browser
+    mkdir "$WS_NAME/.idx/"
+    packageManager=${packageManager} j2 ${./devNix. j2} -o "$WS_NAME/.idx/dev.nix"
+    packageManager=${packageManager} j2 ${./README.j2} -o "$WS_NAME/README.md"
     chmod -R +w "$WS_NAME"
+    mv "$WS_NAME" "$out"
   '';
 }

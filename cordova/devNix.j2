@@ -1,16 +1,29 @@
-# To learn more about how to use Nix to configure your environment
-# see: https://developers.google.com/idx/guides/customize-idx-env
-{ pkgs, ... }: {
+{% set perPackageManager = {
+    "npm": {
+        "packages": "pkgs.nodejs_20",
+        "install": "npm install",
+        "previewWebPrefix": "\"npx\" \"cordova\" \"run\" \"browser\" \"--\"",
+        "previewAndroidPrefix": "npx cordova run android --"
+    },
+    "yarn": {
+        "packages":  "pkgs.yarn",
+        "install": "yarn",
+        "previewWebPrefix":  "\"yarn\" \"cordova\" \"run\" \"browser\" \"--\"",
+        "previewAndroidPrefix": "yarn cordova run android --"
+    },
+}[packageManager]%}# To learn more about how to use Nix to configure your environment
+# see: https://firebase.google.com/docs/studio/customize-workspace
+{ pkgs, ... }:  {
   # Which nixpkgs channel to use.
   channel = "stable-25.05"; # or "unstable"
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    pkgs.nodejs_20
+    {{perPackageManager.packages}}
     pkgs.jdk17
   ];
   # Sets environment variables in the workspace
   env = {
-    JAVA_HOME = "${pkgs.jdk17}";
+    JAVA_HOME = "${pkgs. jdk17}";
   };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
@@ -18,20 +31,17 @@
       "msjsdiag.cordova-tools"
     ];
     workspace = {
-      # Runs when a workspace is first created with this `dev.nix` file
+      # Runs when a workspace is first created with this `dev. nix` file
       onCreate = {
-        install = ''
-          npm install -g cordova
-          cordova create app {{appId}} {{appName}}
-          cd app
-          cordova platform add android
-          cordova platform add browser
-        '';
+        install = "npm install -g cordova && {{perPackageManager.install}}";
       };
       # Runs when a workspace restarted
       onStart = {
         connect-device = ''
-          adb -s localhost:5554 wait-for-device
+          adb -s localhost: 5554 wait-for-device
+        '';
+        android = ''
+          {{perPackageManager.previewAndroidPrefix}} --target=localhost:5554
         '';
       };
     };
@@ -40,13 +50,12 @@
       enable = true;
       previews = {
         web = {
-          command = ["npx" "cordova" "run" "browser" "--" "--port" "$PORT"];
-          cwd = "app";
+          command = [{{perPackageManager.previewWebPrefix}} "--port" "$PORT"];
           manager = "web";
         };
         android = {
-          command = ["npx" "cordova" "run" "android" "--" "--target=localhost:5554"];
-          cwd = "app";
+          # noop
+          command = ["tail" "-f" "/dev/null"];
           manager = "web";
         };
       };

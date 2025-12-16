@@ -1,11 +1,21 @@
-# {{appName}} - Apache Cordova App
+{% set perPackageManager = {
+  "npm": {
+    "packages": "pkgs.nodejs_20",
+    "buildAndroid": "npx cordova build android",
+    "previewAndroid": "npx cordova run android --target=localhost:5554"
+  },
+  "yarn": {
+    "packages": "pkgs. yarn",
+    "buildAndroid": "yarn cordova build android",
+    "previewAndroid":  "yarn cordova run android --target=localhost:5554"
+  },
+}[packageManager]%}# Welcome to your Apache Cordova app 📱
 
-This is an Apache Cordova project for building Android apps with HTML, CSS, and JavaScript.
+This is an [Apache Cordova](https://cordova.apache.org/) project for building Android apps with HTML, CSS, and JavaScript. 
 
 ## Project Structure
 
 ```
-app/
 ├── www/           # Your web assets (HTML, CSS, JS)
 │   ├── index.html
 │   ├── css/
@@ -15,31 +25,37 @@ app/
 └── config.xml     # Cordova configuration
 ```
 
-## Getting Started
+## Get started
 
-1. Edit your web files in `app/www/`
-2. Use the **Web Preview** to test in browser
-3. Use the **Android Preview** to test on the emulator
+#### Android
+
+Android previews are defined as a `workspace.onStart` hook and started as a vscode task when the workspace is opened/started. 
+
+Note, if you can't find the task, either:
+- Rebuild the environment (using command palette: `IDX: Rebuild Environment`), or
+- Run `{{perPackageManager.previewAndroid}}` command manually to run android and see the output in your terminal. 
+
+#### Web
+
+Web previews will be started and managed automatically. Use the toolbar to manually refresh.
+
+You can start developing by editing the files inside the **www** directory. 
 
 ## Common Commands
 
 ```bash
-cd app
+# Build for Android
+{{perPackageManager.buildAndroid}}
 
 # Add a plugin
-cordova plugin add cordova-plugin-camera
+npx cordova plugin add cordova-plugin-camera
 
-# Build for Android
-cordova build android
-
-# Run on Android emulator
-cordova run android
-
-# Run in browser
-cordova run browser
+# List installed plugins
+npx cordova plugin list
 ```
 
-## Resources
+## Learn more
 
 - [Cordova Documentation](https://cordova.apache.org/docs/en/latest/)
 - [Cordova Plugins](https://cordova.apache.org/plugins/)
+- [Cordova CLI Reference](https://cordova.apache.org/docs/en/latest/reference/cordova-cli/)
