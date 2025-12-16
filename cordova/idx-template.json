@@ -1,26 +1,27 @@
 {
-  "name": "React Native + Expo",
-  "description": "A simple React Native + Expo starter",
+  "name": "Apache Cordova",
+  "description": "Build Android apps with HTML, CSS, and JavaScript using Apache Cordova",
   "categories": [
     "Mobile"
   ],
-  "icon": "https://www.gstatic.com/monospace/231115/logo_react-native.svg",
-  "publisher": "Google LLC",
+  "icon":  "https://cordova.apache.org/static/img/cordova_256. png",
+  "publisher": "Shiman",
   "host": {
     "virtualization": true
   },
   "params": [
     {
-      "id": "packageManager",
-      "name": "What package manager do you want to use?",
-      "type": "enum",
-      "default": "npm",
-      "options": {
-        "npm": "npm",
-        "pnpm": "pnpm",
-        "bun": "bun",
-        "yarn": "yarn"
-      },
+      "id":  "appName",
+      "name": "What is your app name?",
+      "type": "text",
+      "default": "MyApp",
+      "required": true
+    },
+    {
+      "id": "appId",
+      "name": "What is your app ID (reverse domain)?",
+      "type": "text",
+      "default":  "com.example.myapp",
       "required": true
     }
   ]

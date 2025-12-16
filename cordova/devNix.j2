@@ -1,28 +1,55 @@
-{
-  "name": "Apache Cordova",
-  "description": "A starter template for building Android apps with HTML, CSS, and JS using Apache Cordova.",
-  "categories": [
-    "Mobile",
-    "Web"
-  ],
-  "icon": "https://cordova.apache.org/static/img/cordova_bot.png",
-  "publisher": "Erick KillMon",
-  "host": {
-    "virtualization": true
-  },
-  "params": [
-    {
-      "id": "packageManager",
-      "name": "What package manager do you want to use?",
-      "type": "enum",
-      "default": "npm",
-      "options": {
-        "npm": "npm",
-        "pnpm": "pnpm",
-        "bun": "bun",
-        "yarn": "yarn"
-      },
-      "required": true
-    }
-  ]
+# To learn more about how to use Nix to configure your environment
+# see: https://developers.google.com/idx/guides/customize-idx-env
+{ pkgs, ... }: {
+  # Which nixpkgs channel to use.
+  channel = "stable-25.05"; # or "unstable"
+  # Use https://search.nixos.org/packages to find packages
+  packages = [
+    pkgs.nodejs_20
+    pkgs.jdk17
+  ];
+  # Sets environment variables in the workspace
+  env = {
+    JAVA_HOME = "${pkgs.jdk17}";
+  };
+  idx = {
+    # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
+    extensions = [
+      "msjsdiag.cordova-tools"
+    ];
+    workspace = {
+      # Runs when a workspace is first created with this `dev.nix` file
+      onCreate = {
+        install = ''
+          npm install -g cordova
+          cordova create app {{appId}} {{appName}}
+          cd app
+          cordova platform add android
+          cordova platform add browser
+        '';
+      };
+      # Runs when a workspace restarted
+      onStart = {
+        connect-device = ''
+          adb -s localhost:5554 wait-for-device
+        '';
+      };
+    };
+    # Enable previews and customize configuration
+    previews = {
+      enable = true;
+      previews = {
+        web = {
+          command = ["npx" "cordova" "run" "browser" "--" "--port" "$PORT"];
+          cwd = "app";
+          manager = "web";
+        };
+        android = {
+          command = ["npx" "cordova" "run" "android" "--" "--target=localhost:5554"];
+          cwd = "app";
+          manager = "web";
+        };
+      };
+    };
+  };
 }

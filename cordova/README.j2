@@ -1,22 +1,45 @@
-# Apache Cordova Project
+# {{appName}} - Apache Cordova App
 
-This is a starter template for building Android apps using Apache Cordova.
-
-## Getting Started
-
-1.  **Wait for the Environment**: The Project IDX environment will automatically install dependencies and prepare the Android platform.
-2.  **Android Preview**: The Android emulator should start automatically. The app will be built and deployed to the emulator via the `onStart` hooks defined in `.idx/dev.nix`.
-
-## Development
-
--   **Source Code**: Edit files in `www/` (index.html, css/index.css, js/index.js).
--   **Rebuild**: If changes are not reflected, you can run:
-    ```bash
-    npx cordova run android
-    ```
+This is an Apache Cordova project for building Android apps with HTML, CSS, and JavaScript.
 
 ## Project Structure
 
--   `www/`: Contains your HTML, CSS, and JS source files.
--   `platforms/android/`: The generated Android native project.
--   `config.xml`: Main Cordova configuration file.
+```
+app/
+├── www/           # Your web assets (HTML, CSS, JS)
+│   ├── index.html
+│   ├── css/
+│   └── js/
+├── platforms/     # Platform-specific code (auto-generated)
+├── plugins/       # Cordova plugins
+└── config.xml     # Cordova configuration
+```
+
+## Getting Started
+
+1. Edit your web files in `app/www/`
+2. Use the **Web Preview** to test in browser
+3. Use the **Android Preview** to test on the emulator
+
+## Common Commands
+
+```bash
+cd app
+
+# Add a plugin
+cordova plugin add cordova-plugin-camera
+
+# Build for Android
+cordova build android
+
+# Run on Android emulator
+cordova run android
+
+# Run in browser
+cordova run browser
+```
+
+## Resources
+
+- [Cordova Documentation](https://cordova.apache.org/docs/en/latest/)
+- [Cordova Plugins](https://cordova.apache.org/plugins/)
