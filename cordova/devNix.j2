@@ -1,60 +1,73 @@
 {% set perPackageManager = {
     "npm": {
         "packages": "pkgs.nodejs_20",
-        "install": "npm install",
-        "previewWebPrefix": "\"npx\" \"cordova\" \"run\" \"browser\" \"--\"",
-        "previewAndroidPrefix": "npx cordova run android --"
+        "install": "npm install"
+    },
+    "bun": {
+        "packages": "pkgs.bun",
+        "install": "bun install"
+    },
+    "pnpm": {
+        "packages": "pkgs.nodePackages.pnpm",
+        "install": "pnpm install"
     },
     "yarn": {
-        "packages":  "pkgs.yarn",
-        "install": "yarn",
-        "previewWebPrefix":  "\"yarn\" \"cordova\" \"run\" \"browser\" \"--\"",
-        "previewAndroidPrefix": "yarn cordova run android --"
+        "packages": "pkgs.yarn",
+        "install": "yarn install"
     },
-}[packageManager]%}# To learn more about how to use Nix to configure your environment
-# see: https://firebase.google.com/docs/studio/customize-workspace
-{ pkgs, ... }:  {
-  # Which nixpkgs channel to use.
-  channel = "stable-25.05"; # or "unstable"
-  # Use https://search.nixos.org/packages to find packages
+}[packageManager]%}
+{ pkgs, ... }: {
+  # Use a stable channel with necessary Android tools
+  channel = "stable-24.05";
+  
   packages = [
     {{perPackageManager.packages}}
     pkgs.jdk17
+    pkgs.gradle
+    pkgs.android-tools
   ];
-  # Sets environment variables in the workspace
+
+  # Environment variables
   env = {
-    JAVA_HOME = "${pkgs. jdk17}";
+    # Cordova needs to know where JAVA_HOME is
+    JAVA_HOME = "${pkgs.jdk17}";
+    ANDROID_HOME = "/home/user/android-sdk"; # Standard path in IDX
   };
+
   idx = {
-    # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
+    # Extensions for Cordova and Web Development
     extensions = [
-      "msjsdiag.cordova-tools"
+      "vsmobile.cordova-tools"
     ];
+
     workspace = {
-      # Runs when a workspace is first created with this `dev. nix` file
+      # Setup commands - run only once when the workspace is created
       onCreate = {
-        install = "npm install -g cordova && {{perPackageManager.install}}";
+        install = "{{perPackageManager.install}}";
+        # CRITICAL: This runs inside the environment, so it has access to Android SDK
+        setup-android = "npx cordova platform add android"; 
       };
-      # Runs when a workspace restarted
+      
+      # Commands to run when the workspace starts/restarts
       onStart = {
+        # 1. Wait for the emulator to be ready
         connect-device = ''
-          adb -s localhost: 5554 wait-for-device
+          adb -s localhost:5554 wait-for-device
         '';
-        android = ''
-          {{perPackageManager.previewAndroidPrefix}} --target=localhost:5554
+        
+        # 2. Deploy the app to the emulator
+        run-android = ''
+          npx cordova run android --emulator --noprepare
         '';
       };
     };
-    # Enable previews and customize configuration
+
+    # Preview configuration
     previews = {
       enable = true;
       previews = {
-        web = {
-          command = [{{perPackageManager.previewWebPrefix}} "--port" "$PORT"];
-          manager = "web";
-        };
+        # Android preview (Viewed via the Android Emulator)
         android = {
-          # noop
           command = ["tail" "-f" "/dev/null"];
           manager = "web";
         };

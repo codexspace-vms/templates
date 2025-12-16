@@ -1,11 +1,12 @@
 {
   "name": "Apache Cordova",
-  "description": "Build Android apps with HTML, CSS, and JavaScript using Apache Cordova",
+  "description": "A starter template for building Android apps with HTML, CSS, and JS using Apache Cordova.",
   "categories": [
-    "Mobile"
+    "Mobile",
+    "Web"
   ],
-  "icon": "https://cordova.apache.org/static/img/cordova_256. png",
-  "publisher": "Favourite",
+  "icon": "https://cordova.apache.org/static/img/cordova_bot.png",
+  "publisher": " LLC",
   "host": {
     "virtualization": true
   },
@@ -17,6 +18,8 @@
       "default": "npm",
       "options": {
         "npm": "npm",
+        "pnpm": "pnpm",
+        "bun": "bun",
         "yarn": "yarn"
       },
       "required": true

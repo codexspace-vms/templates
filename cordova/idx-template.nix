@@ -1,20 +1,36 @@
 { pkgs, packageManager ? "npm", ... }: {
   packages = [
     pkgs.nodejs_20
-    pkgs.yarn
-    pkgs. j2cli
+    pkgs.j2cli
     pkgs.nixfmt
   ];
   bootstrap = ''
     mkdir -p "$WS_NAME"
-    npm install -g cordova
-    cordova create "$WS_NAME" com.example.app MyApp
+    
+    # 1. Create the base Cordova project
+    # We use npx to ensure we use a temporary runner without global side effects
+    export npm_config_yes=true
+    npx cordova create "$WS_NAME" com.example.helloworld HelloWorld
+    
+    # 2. Enter project directory
     cd "$WS_NAME"
-    cordova platform add android
-    cordova platform add browser
-    mkdir "$WS_NAME/.idx/"
-    packageManager=${packageManager} j2 ${./devNix. j2} -o "$WS_NAME/.idx/dev.nix"
-    packageManager=${packageManager} j2 ${./README.j2} -o "$WS_NAME/README.md"
+    
+    # 3. Initialize package.json to manage dependencies
+    npm init -y
+    
+    # 4. Install Cordova locally so it is available in the workspace
+    npm install cordova --save-dev
+    
+    # 5. Generate configuration files using the selected package manager
+    mkdir -p .idx
+    packageManager=${packageManager} j2 ${./devNix.j2} -o .idx/dev.nix
+    packageManager=${packageManager} j2 ${./README.j2} -o README.md
+    
+    # 6. Copy the AI rules file
+    cp ${./.idx/airules.md} .idx/airules.md
+
+    # 7. Final cleanup and move to output
+    cd ..
     chmod -R +w "$WS_NAME"
     mv "$WS_NAME" "$out"
   '';
