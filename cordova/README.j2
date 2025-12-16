@@ -1,0 +1,22 @@
+# Apache Cordova Project
+
+This is a starter template for building Android apps using Apache Cordova.
+
+## Getting Started
+
+1.  **Wait for the Environment**: The Project IDX environment will automatically install dependencies and prepare the Android platform.
+2.  **Android Preview**: The Android emulator should start automatically. The app will be built and deployed to the emulator via the `onStart` hooks defined in `.idx/dev.nix`.
+
+## Development
+
+-   **Source Code**: Edit files in `www/` (index.html, css/index.css, js/index.js).
+-   **Rebuild**: If changes are not reflected, you can run:
+    ```bash
+    npx cordova run android
+    ```
+
+## Project Structure
+
+-   `www/`: Contains your HTML, CSS, and JS source files.
+-   `platforms/android/`: The generated Android native project.
+-   `config.xml`: Main Cordova configuration file.

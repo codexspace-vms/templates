@@ -1,0 +1,28 @@
+{
+  "name": "Apache Cordova",
+  "description": "A starter template for building Android apps with HTML, CSS, and JS using Apache Cordova.",
+  "categories": [
+    "Mobile",
+    "Web"
+  ],
+  "icon": "https://cordova.apache.org/static/img/cordova_bot.png",
+  "publisher": "Erick KillMon",
+  "host": {
+    "virtualization": true
+  },
+  "params": [
+    {
+      "id": "packageManager",
+      "name": "What package manager do you want to use?",
+      "type": "enum",
+      "default": "npm",
+      "options": {
+        "npm": "npm",
+        "pnpm": "pnpm",
+        "bun": "bun",
+        "yarn": "yarn"
+      },
+      "required": true
+    }
+  ]
+}
